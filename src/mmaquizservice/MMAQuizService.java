@@ -5,6 +5,12 @@
  */
 package mmaquizservice;
 
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
 /**
  *
  * @author Windows 8
@@ -16,6 +22,36 @@ public class MMAQuizService {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        
+        int cliente = 0;
+        ///Listening port
+        int port=8989;
+        byte []buffer=new byte[256];
+        // Número de bytes leídos
+        int bytesLeidos=0;
+
+
+        ServerSocket socketServidor;
+        Socket socketConexion=null;
+        
+        
+        try{
+            
+            socketServidor = new ServerSocket(port);
+
+            do
+            {
+                //Aceptamos la conexión
+                socketConexion = socketServidor.accept();
+                
+                InputStream input = socketConexion.getInputStream();
+                
+                QuestionMaker qm = new QuestionMaker(socketConexion, cliente);
+                qm.start();
+            }while(true);
+        }catch (IOException e) {
+            System.err.println("Error al escuchar en el puerto "+port);
+        }
     }
     
 }
