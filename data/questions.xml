@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<metadata>
+	<num_questions>1</num_questions>
+</metadata>
+<questions>
+	<question>
+		<q>¿Quién es el mejor jugador del mundo</q>
+		<A>Messi</A>
+		<B>Cristiano Ronaldo</B>
+		<C>Neymar Jr</C>
+		<correct_answer>Messi</correct_answer>
+	</question>
+</questions>
