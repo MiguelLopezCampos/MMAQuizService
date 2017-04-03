@@ -24,4 +24,29 @@ public class Question {
         answerC = C;
         this.correctAnswer = correctAnswer;
     }
+    
+    public String getQuestion()
+    {
+        return this.question;
+    }
+    
+    public String getAnswerA()
+    {
+        return this.answerA;
+    }
+    
+    public String getAnswerB()
+    {
+        return this.answerB;
+    }
+    
+    public String getAnswerC()
+    {
+        return this.answerC;
+    }
+    
+    public String getCorrectAnswer()
+    {
+        return this.correctAnswer;
+    }
 }

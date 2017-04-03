@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,6 +39,7 @@ public class QuestionMaker extends Thread{
     private final String directory = "";
     
     private Question xmlParser() throws ParserConfigurationException, SAXException, IOException{
+        
         Question q;
         
         
@@ -104,6 +107,26 @@ public class QuestionMaker extends Thread{
                  }
                 else{
                //System.out.println(mensaje);
+                    try {
+                        Question q = xmlParser();
+                        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        datosEnviar = q.getQuestion().getBytes();
+                        outputStream.write(datosEnviar, 0, datosEnviar.length);
+                        datosEnviar = q.getAnswerA().getBytes();
+                        outputStream.write(datosEnviar, 0, datosEnviar.length);
+                        datosEnviar = q.getAnswerB().getBytes();
+                        outputStream.write(datosEnviar, 0, datosEnviar.length);
+                        datosEnviar = q.getAnswerC().getBytes();
+                        outputStream.write(datosEnviar, 0, datosEnviar.length);
+                        datosEnviar = q.getCorrectAnswer().getBytes();
+                        outputStream.write(datosEnviar, 0, datosEnviar.length);
+                    } catch (IOException ex) {
+            
+                    } catch (ParserConfigurationException ex) {
+                        Logger.getLogger(QuestionMaker.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (SAXException ex) {
+                        Logger.getLogger(QuestionMaker.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
 

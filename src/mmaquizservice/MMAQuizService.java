@@ -48,6 +48,7 @@ public class MMAQuizService {
                 
                 QuestionMaker qm = new QuestionMaker(socketConexion, cliente);
                 qm.start();
+                cliente++;
             }while(true);
         }catch (IOException e) {
             System.err.println("Error al escuchar en el puerto "+port);
