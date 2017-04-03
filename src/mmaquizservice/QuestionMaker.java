@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -49,8 +50,16 @@ public class QuestionMaker extends Thread{
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document doc = documentBuilder.parse(input);
         doc.getDocumentElement().normalize();
+        
+        Element e = (Element) doc.getElementsByTagName("metadata").item(0);
+        int num_questions = Integer.parseInt(e.getElementsByTagName("num_questions").item(0).getTextContent());
+        
+        //Obtengo pregunta aleatoria
+        Random r = new Random();
+        int i = r.nextInt(num_questions);
+        
         //Obtengo la pregunta
-        Element eElement = (Element) doc.getElementsByTagName("question").item(0);
+        Element eElement = (Element) doc.getElementsByTagName("question").item(i);
         String question = eElement.getElementsByTagName("q").item(0).getTextContent();
         String A = eElement.getElementsByTagName("A").item(0).getTextContent();
         String B = eElement.getElementsByTagName("B").item(0).getTextContent();
