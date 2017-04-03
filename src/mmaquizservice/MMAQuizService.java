@@ -42,8 +42,9 @@ public class MMAQuizService {
             do
             {
                 //Aceptamos la conexión
+                System.out.println("Listening port");
                 socketConexion = socketServidor.accept();
-                
+                System.out.println("Client accepted");
                 InputStream input = socketConexion.getInputStream();
                 
                 QuestionMaker qm = new QuestionMaker(socketConexion, cliente);
