@@ -37,7 +37,7 @@ public class QuestionMaker extends Thread{
     
     private int id;
     
-    private final String directory = "";
+    private final String directory = "data/questions.xml";
     
     private Question xmlParser() throws ParserConfigurationException, SAXException, IOException{
         
@@ -51,20 +51,27 @@ public class QuestionMaker extends Thread{
         Document doc = documentBuilder.parse(input);
         doc.getDocumentElement().normalize();
         
-        Element e = (Element) doc.getElementsByTagName("metadata").item(0);
-        int num_questions = Integer.parseInt(e.getElementsByTagName("num_questions").item(0).getTextContent());
+        Element a = (Element) doc.getElementsByTagName("data").item(0);
+        Element e = (Element) a.getElementsByTagName("metadata").item(0);
+        int num_questions = Integer.parseInt(e.getElementsByTagName("num").item(0).getTextContent());
         
         //Obtengo pregunta aleatoria
         Random r = new Random();
         int i = r.nextInt(num_questions);
         
         //Obtengo la pregunta
-        Element eElement = (Element) doc.getElementsByTagName("question").item(i);
+        Element b = (Element) a.getElementsByTagName("questions").item(0);
+        Element eElement = (Element) b.getElementsByTagName("question").item(i);
         String question = eElement.getElementsByTagName("q").item(0).getTextContent();
+        System.out.println(question);
         String A = eElement.getElementsByTagName("A").item(0).getTextContent();
+        System.out.println(A);
         String B = eElement.getElementsByTagName("B").item(0).getTextContent();
+        System.out.println(B);
         String C = eElement.getElementsByTagName("C").item(0).getTextContent();
-        String correct_answer = eElement.getElementsByTagName("correct_answer").item(0).getTextContent();
+        System.out.println(C);
+        String correct_answer = eElement.getElementsByTagName("correctanswer").item(0).getTextContent();
+        System.out.println(correct_answer);
         
         //Creo la nueva pregunta
         q= new Question(question, A, B, C, correct_answer);
@@ -119,16 +126,23 @@ public class QuestionMaker extends Thread{
                     try {
                         Question q = xmlParser();
                         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                        System.out.println(q.getQuestion());
+                        outputStream = socketServicio.getOutputStream();
                         datosEnviar = q.getQuestion().getBytes();
-                        outputStream.write(datosEnviar, 0, datosEnviar.length);
+                        outputStream.write(datosEnviar);
+                        outputStream.flush();
                         datosEnviar = q.getAnswerA().getBytes();
-                        outputStream.write(datosEnviar, 0, datosEnviar.length);
+                        outputStream.write(datosEnviar);
+                        outputStream.flush();
                         datosEnviar = q.getAnswerB().getBytes();
-                        outputStream.write(datosEnviar, 0, datosEnviar.length);
+                        outputStream.write(datosEnviar);
+                        outputStream.flush();
                         datosEnviar = q.getAnswerC().getBytes();
-                        outputStream.write(datosEnviar, 0, datosEnviar.length);
+                        outputStream.write(datosEnviar);
+                        outputStream.flush();
                         datosEnviar = q.getCorrectAnswer().getBytes();
-                        outputStream.write(datosEnviar, 0, datosEnviar.length);
+                        outputStream.write(datosEnviar);
+                        outputStream.flush();
                     } catch (IOException ex) {
             
                     } catch (ParserConfigurationException ex) {
