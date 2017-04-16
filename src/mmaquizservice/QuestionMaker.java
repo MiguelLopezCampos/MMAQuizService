@@ -63,7 +63,7 @@ public class QuestionMaker extends Thread{
         Element b = (Element) a.getElementsByTagName("questions").item(0);
         Element eElement = (Element) b.getElementsByTagName("question").item(i);
         String question = eElement.getElementsByTagName("q").item(0).getTextContent();
-        System.out.println(question);
+        //System.out.println(question);
         String A = eElement.getElementsByTagName("A").item(0).getTextContent();
         System.out.println(A);
         String B = eElement.getElementsByTagName("B").item(0).getTextContent();
@@ -124,25 +124,21 @@ public class QuestionMaker extends Thread{
                 else{
                //System.out.println(mensaje);
                     try {
+                        
                         Question q = xmlParser();
                         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
                         System.out.println(q.getQuestion());
                         outputStream = socketServicio.getOutputStream();
                         datosEnviar = q.getQuestion().getBytes();
                         outputStream.write(datosEnviar);
-                        outputStream.flush();
-                        datosEnviar = q.getAnswerA().getBytes();
+                        datosEnviar = ((String)q.getAnswerA()+";").getBytes();
                         outputStream.write(datosEnviar);
-                        outputStream.flush();
-                        datosEnviar = q.getAnswerB().getBytes();
+                        datosEnviar = ((String)q.getAnswerB()+";").getBytes();
                         outputStream.write(datosEnviar);
-                        outputStream.flush();
-                        datosEnviar = q.getAnswerC().getBytes();
+                        datosEnviar = ((String)q.getAnswerC()+";").getBytes();
                         outputStream.write(datosEnviar);
-                        outputStream.flush();
-                        datosEnviar = q.getCorrectAnswer().getBytes();
+                        datosEnviar = ((String)q.getCorrectAnswer()+";").getBytes();
                         outputStream.write(datosEnviar);
-                        outputStream.flush();
                     } catch (IOException ex) {
             
                     } catch (ParserConfigurationException ex) {
