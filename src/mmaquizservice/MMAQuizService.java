@@ -11,6 +11,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 /**
  *
  * @author Windows 8
@@ -20,7 +22,7 @@ public class MMAQuizService {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SAXException, ParserConfigurationException {
         // TODO code application logic here
         
         int cliente = 0;

@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,6 +40,9 @@ public class QuestionMaker extends Thread{
     
     private final String directory = "data/questions.xml";
     
+    private ArrayList <Integer> questions = null;
+    private ArrayList <Integer> question_aux = null;
+    
     private Question xmlParser() throws ParserConfigurationException, SAXException, IOException{
         
         Question q;
@@ -57,11 +61,11 @@ public class QuestionMaker extends Thread{
         
         //Obtengo pregunta aleatoria
         Random r = new Random();
-        int i = r.nextInt(num_questions);
+        int i = r.nextInt(questions.size());
         
         //Obtengo la pregunta
         Element b = (Element) a.getElementsByTagName("questions").item(0);
-        Element eElement = (Element) b.getElementsByTagName("question").item(i);
+        Element eElement = (Element) b.getElementsByTagName("question").item(questions.get(i));
         String question = eElement.getElementsByTagName("q").item(0).getTextContent();
         //System.out.println(question);
         String A = eElement.getElementsByTagName("A").item(0).getTextContent();
@@ -75,15 +79,38 @@ public class QuestionMaker extends Thread{
         
         //Creo la nueva pregunta
         q= new Question(question, A, B, C, correct_answer);
+        
+        questions.remove(i);
+        
+
        
         return q;
         
     }
 
-    public QuestionMaker(Socket socketServicio, int id) throws IOException
+    public QuestionMaker(Socket socketServicio, int id) throws IOException, SAXException, ParserConfigurationException
     {
         this.socketServicio = socketServicio;
         this.id = id;
+        questions = new ArrayList();
+        question_aux = new ArrayList();
+        
+        File input = new File(directory);
+        
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();        
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document doc = documentBuilder.parse(input);
+        doc.getDocumentElement().normalize();
+        
+        Element a = (Element) doc.getElementsByTagName("data").item(0);
+        Element e = (Element) a.getElementsByTagName("metadata").item(0);
+        int num_questions = Integer.parseInt(e.getElementsByTagName("num").item(0).getTextContent());
+        
+        for(int i = 0 ; i < num_questions ; i++)
+        {
+            questions.add(i);
+            question_aux.add(i);
+        }
         
         thr = new Thread(this, "sender");
     }
@@ -123,22 +150,30 @@ public class QuestionMaker extends Thread{
                  }
                 else{
                //System.out.println(mensaje);
-                    try {
+                    try {  
                         
-                        Question q = xmlParser();
-                        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-                        System.out.println(q.getQuestion());
-                        outputStream = socketServicio.getOutputStream();
-                        datosEnviar = q.getQuestion().getBytes();
-                        outputStream.write(datosEnviar);
-                        datosEnviar = ((String)q.getAnswerA()+";").getBytes();
-                        outputStream.write(datosEnviar);
-                        datosEnviar = ((String)q.getAnswerB()+";").getBytes();
-                        outputStream.write(datosEnviar);
-                        datosEnviar = ((String)q.getAnswerC()+";").getBytes();
-                        outputStream.write(datosEnviar);
-                        datosEnviar = ((String)q.getCorrectAnswer()+";").getBytes();
-                        outputStream.write(datosEnviar);
+                        if(questions.size() == 0)
+                        {
+                            outputStream = socketServicio.getOutputStream();
+                            outputStream.write("end;".getBytes());
+                        }else{
+                            Question q = xmlParser();
+                            //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                            System.out.println(q.getQuestion());
+                            outputStream = socketServicio.getOutputStream();
+                            datosEnviar = q.getQuestion().getBytes();
+                            outputStream.write(datosEnviar);
+                            datosEnviar = ((String)q.getAnswerA()+";").getBytes();
+                            outputStream.write(datosEnviar);
+                            datosEnviar = ((String)q.getAnswerB()+";").getBytes();
+                            outputStream.write(datosEnviar);
+                            datosEnviar = ((String)q.getAnswerC()+";").getBytes();
+                            outputStream.write(datosEnviar);
+                            datosEnviar = ((String)q.getCorrectAnswer()+";").getBytes();
+                            outputStream.write(datosEnviar);
+                        }
+                        
+
                     } catch (IOException ex) {
             
                     } catch (ParserConfigurationException ex) {
