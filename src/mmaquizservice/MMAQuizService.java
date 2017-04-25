@@ -22,7 +22,7 @@ public class MMAQuizService {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws SAXException, ParserConfigurationException {
+    public static void main(String[] args) throws SAXException, ParserConfigurationException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         // TODO code application logic here
         
         int cliente = 0;
@@ -56,6 +56,6 @@ public class MMAQuizService {
         }catch (IOException e) {
             System.err.println("Error al escuchar en el puerto "+port);
         }
-    }
-    
+        //DBConnect a = new DBConnect();
+    }   
 }

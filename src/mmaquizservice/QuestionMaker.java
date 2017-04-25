@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -87,7 +89,29 @@ public class QuestionMaker extends Thread{
         return q;
         
     }
+    
+    
+    private ArrayList<String> puntuationParser(String a)
+    {
+        ArrayList <String> values = new ArrayList();
+        String aux = "";
+        
+        for(int i = 0 ; i < a.length() ; i++)
+        {
+            if(a.charAt(i) == ';')
+            {
+                values.add(aux);
+                aux = "";
+            }else
+            {
+                aux = aux+a.charAt(i);
+            }
+        }
+        
+        return values;
+    }
 
+    
     public QuestionMaker(Socket socketServicio, int id) throws IOException, SAXException, ParserConfigurationException
     {
         this.socketServicio = socketServicio;
@@ -139,16 +163,28 @@ public class QuestionMaker extends Thread{
                 bytesRecibidosMensaje = inputStream.read(mensajeRecibido);
 
                // while(chat.todosHanLeido() == false){}
-                                		
+                //System.out.println(mensajeRecibido.toString());
                 String mensaje = new String (mensajeRecibido, 0, bytesRecibidosMensaje);
-
+                
                 if(mensaje.compareTo("\r\r\rexit") == 0){ 
                     socketServicio.close(); 
                     inputStream.close(); 
                     outputStream.close(); 
                     conectado=false;
                  }
-                else{
+                else if(mensaje.contains("\r\rpuntuation"))
+                {
+                    mensaje = mensaje.replace("\r\rpuntuation", "");
+                    bytesRecibidosMensaje = inputStream.read(mensajeRecibido);
+                    mensaje = new String(mensajeRecibido, 0, bytesRecibidosMensaje);
+                    //System.out.println(mensaje);
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+                    ArrayList<String> data = puntuationParser(mensaje);
+                    String id = data.get(0)+timeStamp;
+                    int points = Integer.parseInt(data.get(1));
+                    ContentProvider sender = new ContentProvider();
+                    sender.sendPuntuation(id, data.get(0), points);
+                }else{
                //System.out.println(mensaje);
                     try {  
                         
@@ -186,6 +222,12 @@ public class QuestionMaker extends Thread{
 
         } catch (IOException e) {
                 System.err.println("Error al obtener los flujso de entrada/salida.");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(QuestionMaker.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            Logger.getLogger(QuestionMaker.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            Logger.getLogger(QuestionMaker.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
