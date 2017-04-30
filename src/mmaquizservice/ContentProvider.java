@@ -8,6 +8,8 @@ package mmaquizservice;
 import java.net.Socket;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 /**
  *
@@ -42,5 +44,32 @@ public class ContentProvider{
         {
             
         }
+    }
+    
+    public String getRanking()
+    {
+        String ranking="";
+        
+        try{
+            String query="SELECT * FROM puntuaciones order by puntuacion DESC LIMIT 20";
+            Connection c = dbconnection.getConnection();
+            Statement prepared = c.createStatement();
+            ResultSet rs = prepared.executeQuery(query);
+            
+            while(rs.next())
+            {
+                ranking = ranking+rs.getString("username");
+                ranking = ranking+":";
+                ranking = ranking+rs.getString("puntuacion");
+                ranking = ranking+";";
+            }
+            
+            c.close();
+        }catch(Exception ex)
+        {
+            
+        }
+        
+        return ranking;
     }
 }

@@ -108,6 +108,8 @@ public class QuestionMaker extends Thread{
             }
         }
         
+        values.add(aux);
+        
         return values;
     }
 
@@ -180,11 +182,19 @@ public class QuestionMaker extends Thread{
                     //System.out.println(mensaje);
                     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
                     ArrayList<String> data = puntuationParser(mensaje);
+                    
+                    //System.out.println(data.get(0));
                     String id = data.get(0)+timeStamp;
                     int points = Integer.parseInt(data.get(1));
                     ContentProvider sender = new ContentProvider();
                     sender.sendPuntuation(id, data.get(0), points);
-                }else{
+                }else if(mensaje.contains("\r\rranking")){
+                    outputStream = socketServicio.getOutputStream();
+                    ContentProvider ranking = new ContentProvider();
+                    String datos = ranking.getRanking();
+                    outputStream.write(datos.getBytes());
+                }
+                else{
                //System.out.println(mensaje);
                     try {  
                         
@@ -218,6 +228,7 @@ public class QuestionMaker extends Thread{
                         Logger.getLogger(QuestionMaker.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
+
             }
 
         } catch (IOException e) {
